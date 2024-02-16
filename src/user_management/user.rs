@@ -10,7 +10,7 @@ pub struct UserConfigurationRequest {
 
 #[derive(Debug)]
 pub struct User {
-    socket_id: Sid,
+    id: String,
     username: Option<String>,
     cursor: Cursor,
 }
@@ -18,7 +18,7 @@ pub struct User {
 impl User {
     pub fn from_socket_connection(socket: &SocketRef) -> User {
         User {
-            socket_id: socket.id,
+            id: socket.id.to_string(),
             username: None,
             cursor: Cursor::new(),
         }
@@ -35,8 +35,8 @@ impl User {
         }
     }
 
-    pub fn get_id(&self) -> Sid {
-        self.socket_id
+    pub fn get_id(&self) -> &str {
+        &self.id
     }
 }
 

@@ -1,6 +1,5 @@
 use crate::User;
 use crate::user_management::user_error::UserCreationError;
-use socketioxide::socket::Sid;
 
 pub struct UserStore {
     pub users: Vec<User>,
@@ -17,12 +16,12 @@ impl UserStore {
         Ok(())
     } 
 
-    fn is_id_taken(&self, id: Sid) -> bool {
+    fn is_id_taken(&self, id: &str) -> bool {
         self
             .users
             .iter()
             .map(|user| user.get_id())
-            .collect::<Vec<Sid>>()
+            .collect::<Vec<&str>>()
             .contains(&id)
     }
 }
