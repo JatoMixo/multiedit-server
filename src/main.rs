@@ -2,6 +2,7 @@ use socketioxide::{
     extract::{
         SocketRef,
         Data,
+        State,
     },
     SocketIo
 };
@@ -12,13 +13,9 @@ use tower_http::cors::CorsLayer;
 
 mod user_management;
 use user_management::{
-    user::{
-        User,
-        UserConfigurationRequest,
-    },
-    user_store::{
-
-    },
+    user::User,
+    user_configuration::UserConfigurationRequest,
+    user_store::UserStore,
 };
 
 async fn on_connect(socket: SocketRef) {
@@ -31,7 +28,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     info!("Starting server");
 
-    let (layer, io) = SocketIo::new_layer();
+    let users = UserStore::default();
+
+    let (layer, io) = SocketIo::builder()
+        .with_state(users)
+        .build_layer();
 
     io.ns("/", on_connect);
     

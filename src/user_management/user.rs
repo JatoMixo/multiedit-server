@@ -1,24 +1,15 @@
-use socketioxide::{
-    extract::SocketRef,
-    socket::Sid,
-};
-
-#[derive(Debug, serde::Deserialize)]
-pub struct UserConfigurationRequest {
-    new_username: Option<String>,
-}
+use socketioxide::extract::SocketRef;
+use crate::user_management::user_configuration::UserConfigurationRequest;
 
 #[derive(Debug)]
 pub struct User {
-    id: String,
     username: Option<String>,
     cursor: Cursor,
 }
 
 impl User {
-    pub fn from_socket_connection(socket: &SocketRef) -> User {
+    pub fn empty() -> User {
         User {
-            id: socket.id.to_string(),
             username: None,
             cursor: Cursor::new(),
         }
@@ -33,10 +24,6 @@ impl User {
             None => (),
             Some(final_username) => self.username = Some(final_username),
         }
-    }
-
-    pub fn get_id(&self) -> &str {
-        &self.id
     }
 }
 
