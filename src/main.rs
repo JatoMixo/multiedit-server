@@ -1,4 +1,3 @@
-use axum::routing::get;
 use socketioxide::{
     extract::{
         SocketRef,
@@ -8,7 +7,23 @@ use socketioxide::{
 };
 use tracing::info;
 use tracing_subscriber::FmtSubscriber;
-use serde_json::Value;
+use tower::builder::ServiceBuilder;
+use tower_http::cors::CorsLayer;
+
+mod user_management;
+use user_management::{
+    user::{
+        User,
+        UserConfigurationRequest,
+    },
+    user_store::{
+
+    },
+};
+
+async fn on_connect(socket: SocketRef) {
+    info!("Socket connected: {}", socket.id);
+}
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -18,20 +33,17 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let (layer, io) = SocketIo::new_layer();
 
-    io.ns("/", |socket: SocketRef| {
-        info!("Socket connected: {}", socket.id);
-
-        socket.on("message", |message_socket: SocketRef, Data::<Value>(data)| {
-            info!("Data received: {:?}", data);
-            message_socket.emit("message-back", "Hello to you").ok();
-        });
-    });
+    io.ns("/", on_connect);
     
     let app = axum::Router::new()
-        .route("/", get(|| async {"Hello"}))
-        .layer(layer);
+        .layer(
+            ServiceBuilder::new()
+                .layer(CorsLayer::permissive())
+                .layer(layer),
+        );
 
-    let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await?;
+    const SERVER_PORT: u16 = 3000;
+    let listener = tokio::net::TcpListener::bind(format!("0.0.0.0:{}", SERVER_PORT)).await?;
     axum::serve(listener, app).await?;
 
     Ok(())
