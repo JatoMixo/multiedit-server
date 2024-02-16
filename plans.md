@@ -5,6 +5,5 @@
 - [] Capable of opening an entire directory
 - [] Functionality fopr the server to have a password (Controlling who joins it)
 
-## To Do
-- Refactor UserConfigurationRequest to UserCreationRequest or something like that
+# To Do
 

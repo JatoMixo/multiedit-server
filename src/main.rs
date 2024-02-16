@@ -13,8 +13,10 @@ use tower_http::cors::CorsLayer;
 
 mod user_management;
 use user_management::{
-    user::User,
-    user_configuration::UserConfigurationRequest,
+    user::{
+        User,
+        UserCreationRequest,
+    },
     user_store::UserStore,
 };
 
