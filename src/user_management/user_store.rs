@@ -2,30 +2,31 @@ use crate::User;
 use crate::user_management::user_error::UserCreationError;
 use std::collections::HashMap;
 use socketioxide::socket::Sid;
-
-pub type UserId = Sid;
+use tokio::sync::RwLock;
 
 #[derive(Default)]
 pub struct UserStore {
-    pub users: HashMap<Sid, User>,
+    pub users: RwLock<HashMap<Sid, User>>,
 }
 
 impl UserStore {
-    pub fn add_user(&mut self, user_id: UserId, user_data: User) -> Result<(), UserCreationError> {
-        if self.is_id_taken(user_id) {
+    pub async fn add_user(&self, user_id: Sid, user_data: User) -> Result<(), UserCreationError> {
+        if self.is_id_taken(user_id).await {
             return Err(UserCreationError::UserAlreadyExists);
         }
 
-        self
-            .users
-            .insert(user_id, user_data);
+        let mut users_binding = self.users.write().await;
+
+        users_binding.insert(user_id, user_data);
 
         Ok(())
     } 
 
-    fn is_id_taken(&self, id: UserId) -> bool {
+    async fn is_id_taken(&self, id: Sid) -> bool {
         self
             .users
+            .read()
+            .await
             .contains_key(&id)
     }
 }

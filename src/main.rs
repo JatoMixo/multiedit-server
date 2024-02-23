@@ -20,8 +20,26 @@ use user_management::{
     user_store::UserStore,
 };
 
+async fn handle_join_request(user_socket: SocketRef, data: UserCreationRequest, user_store: State<UserStore>) {
+
+    info!("A user is trying to connect: 
+           - Socket: {:?}
+           - User Data: {:?}", user_socket, data);
+
+    let user = User::create(data);
+
+    match user_store.add_user(user_socket.id, user).await {
+        Ok(_) => info!("User was successfully created"),
+        Err(err) => info!("There was an error when creating the user: {:?}", err),
+    };
+}
+
 async fn on_connect(socket: SocketRef) {
     info!("Socket connected: {}", socket.id);
+
+    socket.on("join",
+        |user_socket: SocketRef, Data::<UserCreationRequest>(data), user_store: State<UserStore>|
+        handle_join_request(user_socket, data, user_store));
 }
 
 #[tokio::main]
@@ -39,6 +57,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     io.ns("/", on_connect);
     
     let app = axum::Router::new()
+        .with_state(io)
         .layer(
             ServiceBuilder::new()
                 .layer(CorsLayer::permissive())

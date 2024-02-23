@@ -1,19 +1,15 @@
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct User {
-    username: Option<String>,
+    username: String,
     cursor: Cursor,
 }
 
 impl User {
-    pub fn empty() -> User {
+    pub fn create(user_creation_data: UserCreationRequest) -> User {
         User {
-            username: None,
+            username: user_creation_data.username,
             cursor: Cursor::new(),
         }
-    }
-
-    pub fn create(&mut self, user_creation_data: UserCreationRequest) {
-        self.username = Some(user_creation_data.username);
     }
 }
 
@@ -23,7 +19,7 @@ pub struct UserCreationRequest {
 }
 
 /// The position of a cursor in the screen, to show it in the rest of the clients
-#[derive(Debug, serde::Deserialize, serde::Serialize)]
+#[derive(Debug, serde::Deserialize, serde::Serialize, Clone)]
 pub struct Cursor {
     column: u32,
     row: u32,
