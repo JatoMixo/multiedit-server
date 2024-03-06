@@ -29,4 +29,12 @@ impl UserStore {
             .await
             .contains_key(&id)
     }
+
+    pub async fn remove_user_by_id(&self, id: Sid) {
+        self
+            .users
+            .write()
+            .await
+            .remove(&id);
+    }
 }

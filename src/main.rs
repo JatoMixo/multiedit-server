@@ -1,10 +1,7 @@
 use socketioxide::{
     extract::{
-        SocketRef,
-        Data,
-        State,
-    },
-    SocketIo
+        Data, SocketRef, State
+    }, socket::DisconnectReason, SocketIo
 };
 use tracing::info;
 use tracing_subscriber::FmtSubscriber;
@@ -28,8 +25,12 @@ async fn handle_join_request(user_socket: SocketRef, data: UserCreationRequest, 
     let user = User::create(data);
 
     match user_store.add_user(user_socket.id, user).await {
-        Ok(_) => info!("User was successfully created"),
-        Err(err) => info!("There was an error when creating the user: {:?}", err),
+        Ok(_) => {
+            info!("User was successfully created")
+        },
+        Err(err) => {
+            info!("There was an error when creating the user: {:?}", err);
+        },
     };
 }
 
@@ -39,6 +40,11 @@ async fn on_connect(socket: SocketRef) {
     socket.on("join",
         |user_socket: SocketRef, Data::<UserCreationRequest>(data), user_store: State<UserStore>|
         handle_join_request(user_socket, data, user_store));
+    
+    socket.on_disconnect(|socket: SocketRef, disconnect_reason: DisconnectReason, user_store: State<UserStore>| async move {
+        info!("Socket disconnected: {:?} -> {:?}", socket.id, disconnect_reason);
+        user_store.remove_user_by_id(socket.id).await;
+    });
 }
 
 #[tokio::main]
