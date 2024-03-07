@@ -14,6 +14,8 @@ impl User {
             cursor: Cursor::new(),
         }
     }
+
+    pub fn move_cursor_to(&mut self, cursor: Cursor) {
+        self.cursor.move_to(cursor);
+    }
 }
-
-

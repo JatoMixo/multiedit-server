@@ -1,4 +1,5 @@
 use crate::User;
+use crate::Cursor;
 use crate::user_management::user_error::UserCreationError;
 use std::collections::HashMap;
 use socketioxide::socket::Sid;
@@ -36,5 +37,14 @@ impl UserStore {
             .write()
             .await
             .remove(&id);
+    }
+
+    pub async fn move_user_cursor_to(&self, user_id: Sid, cursor_movement: Cursor) {
+        self
+            .users
+            .write()
+            .await
+            .entry(user_id)
+            .and_modify(|user| user.move_cursor_to(cursor_movement));
     }
 }

@@ -12,5 +12,9 @@ impl Cursor {
             row: 0,
         }
     }
-}
 
+    pub fn move_to(&mut self, cursor: Cursor) {
+        self.column = cursor.column;
+        self.row = cursor.row;
+    }
+}
