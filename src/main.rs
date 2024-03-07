@@ -30,6 +30,8 @@ async fn handle_join_request(user_socket: SocketRef, data: UserCreationRequest, 
         },
         Err(err) => {
             info!("There was an error when creating the user: {:?}", err);
+
+            let _ = user_socket.emit("user-creation-error", err.to_string());
         },
     };
 }
