@@ -17,7 +17,7 @@ use user_management::{
     user_store::UserStore,
 };
 
-async fn handle_join_request(user_socket: SocketRef, data: UserCreationRequest, user_store: State<UserStore>) {
+async fn handle_join_request(user_socket: SocketRef, Data(data): Data::<UserCreationRequest>, user_store: State<UserStore>) {
 
     info!("A user is trying to connect: 
            - Socket: {:?}
@@ -37,17 +37,17 @@ async fn handle_join_request(user_socket: SocketRef, data: UserCreationRequest, 
     };
 }
 
+async fn handle_socket_disconnection(socket: SocketRef, disconnect_reason: DisconnectReason, user_store: State<UserStore>) {
+    info!("Socket disconnected: {:?} -> {:?}", socket.id, disconnect_reason);
+    user_store.remove_user_by_id(socket.id).await;
+}
+
 async fn on_connect(socket: SocketRef) {
     info!("Socket connected: {}", socket.id);
 
-    socket.on("join",
-        |user_socket: SocketRef, Data::<UserCreationRequest>(data), user_store: State<UserStore>|
-        handle_join_request(user_socket, data, user_store));
+    socket.on("join", handle_join_request);
 
-    socket.on_disconnect(|socket: SocketRef, disconnect_reason: DisconnectReason, user_store: State<UserStore>| async move {
-        info!("Socket disconnected: {:?} -> {:?}", socket.id, disconnect_reason);
-        user_store.remove_user_by_id(socket.id).await;
-    });
+    socket.on_disconnect(handle_socket_disconnection);
 }
 
 #[tokio::main]
