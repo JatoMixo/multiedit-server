@@ -14,7 +14,6 @@ mod user_management;
 use user_management::{
     user::User,
     user_creation::UserCreationRequest,
-    cursor::Cursor,
     user_store::UserStore,
 };
 
@@ -38,12 +37,6 @@ async fn handle_join_request(user_socket: SocketRef, data: UserCreationRequest, 
     };
 }
 
-async fn handle_cursor_movement(user_socket: SocketRef, cursor_movement: Cursor, user_store: State<UserStore>) {
-    user_store
-        .move_user_cursor_to(user_socket.id, cursor_movement)
-        .await;
-}
-
 async fn on_connect(socket: SocketRef) {
     info!("Socket connected: {}", socket.id);
 
@@ -51,10 +44,6 @@ async fn on_connect(socket: SocketRef) {
         |user_socket: SocketRef, Data::<UserCreationRequest>(data), user_store: State<UserStore>|
         handle_join_request(user_socket, data, user_store));
 
-    socket.on("cursor-move", 
-        |user_socket: SocketRef, Data::<Cursor>(cursor_movement), user_store: State<UserStore>|
-        handle_cursor_movement(user_socket, cursor_movement, user_store));
-    
     socket.on_disconnect(|socket: SocketRef, disconnect_reason: DisconnectReason, user_store: State<UserStore>| async move {
         info!("Socket disconnected: {:?} -> {:?}", socket.id, disconnect_reason);
         user_store.remove_user_by_id(socket.id).await;

@@ -2,3 +2,4 @@
 pub struct UserCreationRequest {
     pub username: String,
 }
+
