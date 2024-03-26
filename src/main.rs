@@ -1,10 +1,4 @@
-use socketioxide::{
-    extract::{
-        Data, SocketRef, State
-    },
-    socket::DisconnectReason,
-    SocketIo,
-};
+use socketioxide::SocketIo;
 use tracing::info;
 use tracing_subscriber::FmtSubscriber;
 use tower::builder::ServiceBuilder;
@@ -17,38 +11,8 @@ use user_management::{
     user_store::UserStore,
 };
 
-async fn handle_join_request(user_socket: SocketRef, Data(data): Data::<UserCreationRequest>, user_store: State<UserStore>) {
-
-    info!("A user is trying to connect: 
-           - Socket: {:?}
-           - User Data: {:?}", user_socket, data);
-
-    let user = User::create(data);
-
-    match user_store.add_user(user_socket.id, user).await {
-        Ok(_) => {
-            info!("User was successfully created")
-        },
-        Err(err) => {
-            info!("There was an error when creating the user: {:?}", err);
-
-            let _ = user_socket.emit("user-creation-error", err.to_string());
-        },
-    };
-}
-
-async fn handle_socket_disconnection(socket: SocketRef, disconnect_reason: DisconnectReason, user_store: State<UserStore>) {
-    info!("Socket disconnected: {:?} -> {:?}", socket.id, disconnect_reason);
-    user_store.remove_user_by_id(socket.id).await;
-}
-
-async fn on_connect(socket: SocketRef) {
-    info!("Socket connected: {}", socket.id);
-
-    socket.on("join", handle_join_request);
-
-    socket.on_disconnect(handle_socket_disconnection);
-}
+mod server;
+use server::connection_manager::on_connect;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
