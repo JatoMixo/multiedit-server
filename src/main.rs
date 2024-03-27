@@ -4,11 +4,11 @@ use tracing_subscriber::FmtSubscriber;
 use tower::builder::ServiceBuilder;
 use tower_http::cors::CorsLayer;
 
-mod user_management;
-use user_management::{
-    user::User,
-    user_creation::UserCreationRequest,
-    user_store::UserStore,
+mod user_system;
+use user_system::{
+    User,
+    UserCreationRequest,
+    UserStore,
 };
 
 mod server;

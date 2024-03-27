@@ -4,10 +4,10 @@ use socketioxide::extract::{
     Data,
 };
 use tracing::info;
-use crate::user_management::{
-    user_store::UserStore,
-    user::User,
-    user_creation::UserCreationRequest,
+use crate::user_system::{
+    UserStore,
+    User,
+    UserCreationRequest,
 };
 
 pub async fn handle_join_request(user_socket: SocketRef, Data(data): Data::<UserCreationRequest>, user_store: State<UserStore>) {
