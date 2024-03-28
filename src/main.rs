@@ -5,10 +5,7 @@ use tower::builder::ServiceBuilder;
 use tower_http::cors::CorsLayer;
 
 mod user_management;
-use user_management::{
-    User,
-    UserStore,
-};
+use user_management::UserStore;
 
 mod server;
 use server::on_connect;
