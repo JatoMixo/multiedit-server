@@ -12,7 +12,7 @@ use user_management::{
 };
 
 mod server;
-use server::connection_manager::on_connect;
+use server::connections::on_connect;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
