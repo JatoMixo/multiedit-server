@@ -6,8 +6,8 @@ use socketioxide::{
     }
 };
 use crate::{
-    server::join::handle_join_request,
-    user_management::user_store::UserStore,
+    server::handle_join_request,
+    user_management::UserStore,
 };
 use tracing::info;
 

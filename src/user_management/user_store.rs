@@ -1,4 +1,4 @@
-use crate::User;
+use crate::user_management::User;
 use crate::user_management::user_error::UserCreationError;
 use std::collections::HashMap;
 use socketioxide::socket::Sid;

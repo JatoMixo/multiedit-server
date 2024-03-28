@@ -5,9 +5,9 @@ use socketioxide::extract::{
 };
 use tracing::info;
 use crate::user_management::{
-    user_store::UserStore,
-    user::User,
-    user_creation::UserCreationRequest,
+    UserStore,
+    User,
+    UserCreationRequest,
 };
 
 /// Handle the join message sent by a client after its connection

@@ -6,13 +6,12 @@ use tower_http::cors::CorsLayer;
 
 mod user_management;
 use user_management::{
-    user::User,
-    user_creation::UserCreationRequest,
-    user_store::UserStore,
+    User,
+    UserStore,
 };
 
 mod server;
-use server::connections::on_connect;
+use server::on_connect;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {

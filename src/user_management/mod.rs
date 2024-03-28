@@ -1,4 +1,10 @@
-pub mod user;
-pub mod user_store;
+mod user;
+pub use user::User;
+
+mod user_store;
+pub use user_store::UserStore;
+
 pub mod user_error;
-pub mod user_creation;
+
+mod user_creation;
+pub use user_creation::UserCreationRequest;

@@ -1,4 +1,4 @@
-use crate::UserCreationRequest;
+use crate::user_management::UserCreationRequest;
 use socketioxide::socket::Sid;
 
 /// A user connected to the server
