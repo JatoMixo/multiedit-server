@@ -2,17 +2,21 @@ use tower::builder::ServiceBuilder;
 use tower_http::cors::CorsLayer;
 use tracing::info;
 use socketioxide::SocketIo;
+use std::path::PathBuf;
 use crate::{
     user_management::UserStore,
+    file_tracking::DirectoryTracker,
     server::on_connect,
 };
 
-pub async fn start_server() -> Result<(), std::io::Error> {
+pub async fn start_server(port: u16, root_of_project: PathBuf) -> Result<(), std::io::Error> {
     info!("Starting server");
 
     let users = UserStore::default();
+    let directory_tracker = DirectoryTracker::new(root_of_project).unwrap();
 
     let (layer, io) = SocketIo::builder()
+        .with_state(directory_tracker)
         .with_state(users)
         .build_layer();
 
@@ -26,8 +30,7 @@ pub async fn start_server() -> Result<(), std::io::Error> {
                 .layer(layer),
         );
 
-    const SERVER_PORT: u16 = 3000;
-    let listener = tokio::net::TcpListener::bind(format!("0.0.0.0:{}", SERVER_PORT)).await?;
+    let listener = tokio::net::TcpListener::bind(format!("0.0.0.0:{}", port)).await?;
     axum::serve(listener, app).await?;
 
     Ok(())
