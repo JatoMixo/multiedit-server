@@ -1,6 +1,7 @@
 use tower::builder::ServiceBuilder;
 use tower_http::cors::CorsLayer;
 use tracing::info;
+use tracing_subscriber::FmtSubscriber;
 use socketioxide::SocketIo;
 use std::path::PathBuf;
 use crate::{
@@ -9,7 +10,9 @@ use crate::{
     server::on_connect,
 };
 
-pub async fn start_server(port: u16, root_of_project: PathBuf) -> Result<(), std::io::Error> {
+pub async fn start_server(port: u16, root_of_project: PathBuf) -> Result<(), Box<dyn std::error::Error>> {
+    tracing::subscriber::set_global_default(FmtSubscriber::default())?;
+
     info!("Starting server");
 
     let users = UserStore::default();
