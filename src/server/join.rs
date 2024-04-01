@@ -3,7 +3,10 @@ use socketioxide::extract::{
     State,
     Data,
 };
-use tracing::info;
+use tracing::{
+    info,
+    error,
+};
 use crate::{file_tracking::DirectoryTracker, user_management::{
     User, UserCreationRequest, UserStore
 }};
@@ -29,7 +32,7 @@ pub async fn handle_join_request(
             info!("User was successfully created")
         },
         Err(err) => {
-            info!("There was an error when creating the user: {:?}", err);
+            error!("There was an error when creating the user: {:?}", err);
 
             let _ = user_socket.emit("user-creation-error", err.to_string());
         },
@@ -44,6 +47,6 @@ async fn send_files_to_client(
 ) {
     match user_socket.emit("filetree", project_tracker) {
         Ok(_) => info!("Project sucessfully sent to client"),
-        Err(err) => info!("There was an error when sending the files to the client: {}", err),
+        Err(err) => error!("There was an error when sending the files to the client: {}", err),
     }
 }

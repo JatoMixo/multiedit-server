@@ -30,3 +30,5 @@ Everything that's left to do in the project
     - [ ] passwd => Change password
     - **UNDO STUFF GOES HERE**
 
+## Docs
+- [ ] Create a small documentation page (with docs.rs in some sort of way, or starlight, who knows) containing the messages the server accepts and returns
