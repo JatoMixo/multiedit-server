@@ -10,7 +10,7 @@ use server::start_server;
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     const SERVER_PORT: u16 = 3000;
-    start_server(SERVER_PORT, PathBuf::new()).await?;
+    start_server(SERVER_PORT, PathBuf::from("./test-directory")).await?;
 
     Ok(())
 }

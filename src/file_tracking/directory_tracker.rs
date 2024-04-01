@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-#[derive(Debug, serde::Deserialize)]
+#[derive(Debug, serde::Deserialize, serde::Serialize)]
 pub struct DirectoryTracker {
     root: PathBuf,
     // String for now, just to test and send something back to the client
