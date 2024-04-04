@@ -1,6 +1,10 @@
 # TODO
 Everything that's left to do in the project
 
+- [ ] Set up proper testing on the project
+    - [ ] File Tracking
+    - [ ] The server itself???
+
 ## User Management
 - [ ] Allow the server to have a password so not anyone can join
 - [ ] Implement some type of random username when two users have the same username
