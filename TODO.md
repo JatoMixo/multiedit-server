@@ -4,6 +4,7 @@ Everything that's left to do in the project
 - [ ] Set up proper testing on the project
     - [ ] File Tracking
     - [ ] The server itself???
+- [ ] Add better documentation comments (document the modules, for example)
 
 ## User Management
 - [ ] Allow the server to have a password so not anyone can join
