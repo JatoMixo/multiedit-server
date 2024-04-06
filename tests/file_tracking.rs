@@ -6,6 +6,7 @@ use multiedit_server::file_tracking::{
     Deletion,
 };
 use std::io::Read;
+use indoc::indoc;
 
 #[cfg(test)]
 mod test_file_tracking {
@@ -26,12 +27,13 @@ mod test_file_tracking {
         let mut new_file_content = String::new();
         let _ = std::fs::File::open(&testing_environment.example_files_at_root[0]).unwrap().read_to_string(&mut new_file_content);
 
-        assert_eq!(new_file_content,
-                   "potato('Hello')
-                             a = 5
-                             print(a)
-                             
+        assert_eq!(new_file_content, indoc!{"
+            potato('Hello')
+            a = 5
+            print(a)
 
-                             # this test sucks");
+
+            # this test sucks
+        "});
     }
 }

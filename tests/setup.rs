@@ -6,6 +6,7 @@ use std::{
     path::PathBuf,
     io::Write,
 };
+use indoc::indoc;
 
 pub struct TestingEnvironment {
     // TODO: Maybe this should be changed to a PathBuf
@@ -23,21 +24,25 @@ impl TestingEnvironment {
         // new lines; find a way to prevent that from happening.
         let example_file_0_path = format!("{}/example1.py", DIRECTORY_NAME);
         let mut example_file_0 = File::create(&example_file_0_path).unwrap();
-        example_file_0.write("print('Hello')
-                             a = 5
-                             print(a)
-                             
+        example_file_0.write(indoc! {"
+            print('Hello')
+            a = 5
+            print(a)
 
-                             # this test sucks".as_bytes()).unwrap();
+
+            # this test sucks
+        "}.as_bytes()).unwrap();
 
         let example_file_1_path = format!("{}/example2.lua", DIRECTORY_NAME);
         let mut example_file_1 = File::create(&example_file_1_path).unwrap();
-        example_file_1.write("print('Hello')
-                             local a = 5
-                             print(a)
-                             
+        example_file_1.write(indoc! {"
+            print('Hello')
+            local a = 5
+            print(a)
 
-                             -- this test doesn't suck".as_bytes()).unwrap();
+
+            -- this test doesn't suck
+        "}.as_bytes()).unwrap();
 
         let example_files_at_root = [
             example_file_0_path,
