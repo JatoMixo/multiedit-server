@@ -28,15 +28,25 @@ impl FileTracker {
 
     }
 
-    fn open_file(&self) -> Result<File, FileTrackerError> {
+    fn open_file_for_reading(&self) -> Result<File, FileTrackerError> {
         match File::open(&self.file_path) {
             Ok(file) => Ok(file),
             Err(_) => Err(FileTrackerError::CantOpenFile),
         }
     }
 
+    /// WARN: This will create the file if it doesn't exist
+    /// or it'll truncate it if it does, this bis because it's using
+    /// File::create to open it
+    fn open_file_for_writing(&self) -> Result<File, FileTrackerError> {
+        match File::create(&self.file_path) {
+            Ok(file) => Ok(file),
+            Err(_) => Err(FileTrackerError::CantOpenFile),
+        }
+    }
+
     fn get_current_file_content(&self) -> Result<String, FileTrackerError> {
-        let mut file = self.open_file()?;
+        let mut file = self.open_file_for_reading()?;
 
         let mut content = String::new();
         match file.read_to_string(&mut content) {
@@ -46,7 +56,7 @@ impl FileTracker {
     }
 
     fn write_content_to_file(&mut self, content: String) -> Result<(), FileTrackerError> {
-        let mut file = self.open_file()?;
+        let mut file = self.open_file_for_writing()?;
 
         match file.write_all(content.as_bytes()) {
             Ok(_) => Ok(()),
@@ -75,6 +85,7 @@ impl FileTracker {
     }
 }
 
+#[derive(Debug)]
 pub enum FileTrackerError {
     CantOpenFile,
     CantReadContentOfFile,
@@ -104,14 +115,14 @@ impl FileChange {
 }
 
 #[derive(Debug)]
-struct Insertion {
+pub struct Insertion {
     pub start_index: usize,
     // TODO: Maybe change from string to [u8]??? Works better for files I think... 
     pub content_inserted: String,
 }
 
 #[derive(Debug)]
-struct Deletion {
+pub struct Deletion {
     pub start_index: usize,
     pub end_index: usize,
 }
