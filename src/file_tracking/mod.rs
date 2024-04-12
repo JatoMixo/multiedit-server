@@ -5,7 +5,5 @@ mod file_tracker;
 pub use file_tracker::{
     FileTracker,
     FileChange,
-    Insertion,
-    Deletion,
 };
 

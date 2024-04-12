@@ -2,14 +2,12 @@ mod setup;
 use multiedit_server::file_tracking::{
     FileTracker,
     FileChange,
-    Insertion,
-    Deletion,
 };
 use std::io::Read;
 use indoc::indoc;
 
 #[cfg(test)]
-mod test_file_tracking {
+mod file_tracking {
     use super::*;
 
     #[test]
@@ -19,9 +17,9 @@ mod test_file_tracking {
         let mut file_tracker_0 = FileTracker::new(std::path::PathBuf::from(&testing_environment.example_files_at_root[0])).unwrap();
         file_tracker_0.apply_change(FileChange::new(
             socketioxide::socket::Sid::new(),
-
-            vec![Deletion{ start_index: 0, end_index: 5 }],
-            vec![Insertion{ start_index: 5, content_inserted: "potato".to_string()}],
+            0,
+            5,
+            "potato".to_string(),
         )).unwrap();
 
         let mut new_file_content = String::new();

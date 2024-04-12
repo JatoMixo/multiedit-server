@@ -36,7 +36,7 @@ impl FileTracker {
     }
 
     /// WARN: This will create the file if it doesn't exist
-    /// or it'll truncate it if it does, this bis because it's using
+    /// or it'll truncate it if it does, this is because it's using
     /// File::create to open it
     fn open_file_for_writing(&self) -> Result<File, FileTrackerError> {
         match File::create(&self.file_path) {
@@ -65,18 +65,12 @@ impl FileTracker {
     }
 
     pub fn apply_change(&mut self, change: FileChange) -> Result<(), FileTrackerError> {
-
-        // TODO: This can surely be optimized with some sort of cache stuff  to prevent getting the
+        
+        // TODO: This can surely be optimized with some sort of cache stuff to prevent getting the
         // file content over and over whenever a change is applied.
         let mut file_content = self.get_current_file_content()?;
 
-        change.deletions.iter().for_each(|deletion| {
-            file_content.drain(deletion.start_index..deletion.end_index); 
-        });
-
-        change.insertions.iter().for_each(|insertion| {
-            file_content.insert_str(insertion.start_index, &insertion.content_inserted);
-        });
+        change.apply_to(&mut file_content);
 
         self.write_content_to_file(file_content)?;
         self.changes_history.push_back(change);
@@ -92,38 +86,65 @@ pub enum FileTrackerError {
     CantWriteContentToFile,
 }
 
+// TODO: This way of storing the changes is a bit weird to use with the Myers diff algorithm, it
+// works, but a single change that has a certain part that hasn't changed will count as 2, for
+// example: AAABBB -> CCABCC Will require 2 FileChange's to get stored, when it was just a single
+// changed with a spot in the middle that stays the same. Maybe create a different struct like
+// LineChange that takes care of this part and store a vector of LineChange's in the FileChange
+
+/// A Change applied to a file. When applying the change, it deletes the content in
+/// between the start index and the end index of it, and then inserts the new content
+/// there as a sort of replacement. It also contains the ID of the author.
 #[derive(Debug)]
 pub struct FileChange {
     author_id: Sid,
 
-    pub deletions: Vec<Deletion>,
-    pub insertions: Vec<Insertion>,
+    start_index: usize,
+    end_index: usize,
+    // TODO: Change this to some sort of [u8]
+    content: String,
 }
 
 impl FileChange {
-    pub fn new(author_id: Sid, deletions: Vec<Deletion>, insertions: Vec<Insertion>) -> FileChange {
+    /// Create a new FileChange
+    pub fn new(
+        author_id: Sid,
+        start_index: usize,
+        end_index: usize,
+        content: String,
+    ) -> FileChange {
         FileChange {
             author_id,
-            insertions,
-            deletions,
+            start_index,
+            end_index,
+            content,
         }
+        
+    }
+
+    /// Create a new file change that deletes a range of characters (Replaces that range in the
+    /// content by an empty one)
+    pub fn create_deletion(
+        author_id: Sid,
+        start_index: usize,
+        end_index: usize
+    ) -> FileChange {
+        FileChange {
+            author_id,
+            start_index,
+            end_index,
+            content: String::new(),
+        }
+    }
+
+    pub fn apply_to(&self, str: &mut String) {
+        str.drain(self.start_index..self.end_index);
+
+        str.insert_str(self.start_index, &self.content);
     }
 
     pub fn get_author_id(&self) -> Sid {
         self.author_id
     }
-}
-
-#[derive(Debug)]
-pub struct Insertion {
-    pub start_index: usize,
-    // TODO: Maybe change from string to [u8]??? Works better for files I think... 
-    pub content_inserted: String,
-}
-
-#[derive(Debug)]
-pub struct Deletion {
-    pub start_index: usize,
-    pub end_index: usize,
 }
 
