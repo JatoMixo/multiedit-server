@@ -1,3 +1,4 @@
+//! Everything related to managing the clients connected to the MultiEdit server.
 mod user;
 pub use user::User;
 

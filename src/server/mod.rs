@@ -1,3 +1,4 @@
+/// Everything related to starting and managing the socketio server
 mod connections;
 pub use connections::on_connect;
 
