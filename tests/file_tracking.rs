@@ -2,8 +2,12 @@ mod setup;
 use multiedit_server::file_tracking::{
     FileTracker,
     FileChange,
+    Path,
 };
-use std::io::Read;
+use std::{
+    io::Read,
+    path::PathBuf,
+};
 use indoc::indoc;
 
 #[cfg(test)]
@@ -14,7 +18,11 @@ mod file_tracking {
     fn simple_file_tracking() {
         let testing_environment = setup::TestingEnvironment::create();
 
-        let mut file_tracker_0 = FileTracker::new(std::path::PathBuf::from(&testing_environment.example_files_at_root[0])).unwrap();
+        let mut file_tracker_0 = FileTracker::new(Path::new(
+                PathBuf::new(), 
+                PathBuf::from(&testing_environment.example_files_at_root[0])
+            )
+        ).unwrap();
         file_tracker_0.apply_change(FileChange::new(
             socketioxide::socket::Sid::new(),
             0,

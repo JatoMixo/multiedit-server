@@ -9,3 +9,6 @@ pub use file_tracker::{
     FileChange,
 };
 
+mod path;
+pub use path::Path;
+

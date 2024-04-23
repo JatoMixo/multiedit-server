@@ -2,21 +2,20 @@ use std::{
     collections::VecDeque,
     fs::File,
     io::{Read, Write},
-    path::PathBuf
 };
 use socketioxide::socket::Sid;
+use crate::file_tracking::Path;
 
 #[derive(Debug)]
 pub struct FileTracker {
-    // TODO: PathBuf problems again
-    file_path: PathBuf,
+    file_path: Path,
     changes_history: VecDeque<FileChange>,
 }
 
 impl FileTracker {
-    pub fn new(file_path: PathBuf) -> Result<FileTracker, FileTrackerError> {
+    pub fn new(file_path: Path) -> Result<FileTracker, FileTrackerError> {
 
-        let file = File::open(&file_path);
+        let file = File::open(&file_path.get_absolute_path());
 
         match file {
             Ok(_) => Ok(FileTracker {
@@ -29,7 +28,7 @@ impl FileTracker {
     }
 
     fn open_file_for_reading(&self) -> Result<File, FileTrackerError> {
-        match File::open(&self.file_path) {
+        match File::open(&self.file_path.get_absolute_path()) {
             Ok(file) => Ok(file),
             Err(_) => Err(FileTrackerError::CantOpenFile),
         }
@@ -39,7 +38,7 @@ impl FileTracker {
     /// or it'll truncate it if it does, this is because it's using
     /// File::create to open it
     fn open_file_for_writing(&self) -> Result<File, FileTrackerError> {
-        match File::create(&self.file_path) {
+        match File::create(&self.file_path.get_absolute_path()) {
             Ok(file) => Ok(file),
             Err(_) => Err(FileTrackerError::CantOpenFile),
         }
