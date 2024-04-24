@@ -6,7 +6,7 @@ use std::{
 use socketioxide::socket::Sid;
 use crate::file_tracking::Path;
 
-#[derive(Debug)]
+#[derive(Debug, serde::Serialize)]
 pub struct FileTracker {
     file_path: Path,
     changes_history: VecDeque<FileChange>,
@@ -94,7 +94,7 @@ pub enum FileTrackerError {
 /// A Change applied to a file. When applying the change, it deletes the content in
 /// between the start index and the end index of it, and then inserts the new content
 /// there as a sort of replacement. It also contains the ID of the author.
-#[derive(Debug)]
+#[derive(Debug, serde::Serialize)]
 pub struct FileChange {
     author_id: Sid,
 

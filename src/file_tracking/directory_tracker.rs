@@ -1,14 +1,19 @@
-use std::path::PathBuf;
+use std::fs::DirEntry;
+use crate::file_tracking::{
+    Path,
+    FileTracker,
+};
 
-#[derive(Debug, serde::Deserialize, serde::Serialize)]
+/// Tracks the changes applied to all the files in a directory, and also tracks the changes inside
+/// of other directories within it recursively.
+#[derive(Debug, serde::Serialize)]
 pub struct DirectoryTracker {
-    // WARN: This is using PathBuf, which might leak data about the files in the host computer (A
-    // local file inclusion)
-    // TODO: Change this to a custom LocalPath struct or something like that to prevent this from
-    // happening
-    root: PathBuf,
-    // String for now, just to test and send something back to the client
-    files: Vec<String>,
+    /// The location of the tracked directory
+    root: Path,
+    /// The file trackers for each file inside the tracked directory
+    files: Vec<FileTracker>,
+    /// The directory trackers for each nested directory
+    directories: Vec<DirectoryTracker>,
 }
 
 #[derive(Debug)]
@@ -17,18 +22,30 @@ pub enum DirectoryTrackerError {
 }
 
 impl DirectoryTracker {
-    pub fn new(root: PathBuf) -> Result<DirectoryTracker, DirectoryTrackerError> {
-        match std::fs::read_dir(&root) {
+    /// Create a new directory tracker given the path of the directory to track
+    pub fn new(root: Path) -> Result<DirectoryTracker, DirectoryTrackerError> {
+        match std::fs::read_dir(&root.get_absolute_path()) {
             Ok(files_direntries) => {
-                
-                let file_names = files_direntries.map(|file_direntry| {
-                    file_direntry.unwrap().file_name().to_str().unwrap().to_string()
-                }).collect::<Vec<String>>();
+
+                let files = files_direntries
+                    .map(|direntry_result| {
+                        direntry_result.unwrap()
+                    })
+                    .filter(|direntry| {
+                        direntry.metadata().unwrap().is_file()
+                    })
+                    .map(|direntry| {
+                        FileTracker::new(
+                            root.pushed_to_local_path(direntry.path())
+                        ).unwrap()
+                    })
+                    .collect::<Vec<FileTracker>>();
 
                 Ok(
                     DirectoryTracker {
                         root,
-                        files: file_names,
+                        files,
+                        directories: Vec::new(),
                     }
                 )
             },

@@ -6,7 +6,7 @@ use socketioxide::SocketIo;
 use std::path::PathBuf;
 use crate::{
     user_management::UserStore,
-    file_tracking::DirectoryTracker,
+    file_tracking::{DirectoryTracker, Path},
     server::on_connect,
 };
 
@@ -16,7 +16,7 @@ pub async fn start_server(port: u16, root_of_project: PathBuf) -> Result<(), Box
     info!("Starting server");
 
     let users = UserStore::default();
-    let directory_tracker = DirectoryTracker::new(root_of_project).unwrap();
+    let directory_tracker = DirectoryTracker::new(Path::new(root_of_project, PathBuf::from(""))).unwrap();
 
     let (layer, io) = SocketIo::builder()
         .with_state(directory_tracker)

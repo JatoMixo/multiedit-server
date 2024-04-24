@@ -30,4 +30,22 @@ mod path_usage {
 
         assert_eq!(PathBuf::from("tests/test-directory/example-1.py"), a.get_absolute_path());
     }
+
+    #[test]
+    fn pushed_to_local_path() {
+        assert_eq!(
+            Path::new(PathBuf::from("a/b/c"), PathBuf::from("potato/asdasd")).get_absolute_path(),
+            Path::new(PathBuf::from("a/b/c"), PathBuf::from("potato")).pushed_to_local_path(PathBuf::from("asdasd")).get_absolute_path()
+        );
+
+        assert_eq!(
+            Path::new(PathBuf::from(""), PathBuf::from("potato/thisisweird/hello")).get_absolute_path(),
+            Path::new(PathBuf::from(""), PathBuf::from("potato")).pushed_to_local_path(PathBuf::from("thisisweird/hello")).get_absolute_path()
+        );
+
+        assert_eq!(
+            Path::new(PathBuf::from("making/tests/is/boring/me/rn"), PathBuf::from("send/help/pls/asdasd")).get_absolute_path(),
+            Path::new(PathBuf::from("making/tests/is/boring/me/rn"), PathBuf::from("send/help/pls")).pushed_to_local_path(PathBuf::from("asdasd")).get_absolute_path()
+        );
+    }
 }
