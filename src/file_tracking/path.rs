@@ -29,6 +29,7 @@ impl Path {
         absolute_path
     }
     
+    /// Push a PathBuf to the local path and return the result
     pub fn pushed_to_local_path(&self, new_part: PathBuf) -> Path {
         let mut new_local_path = self.local_path.clone();
         new_local_path.push(new_part);
