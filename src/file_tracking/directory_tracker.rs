@@ -1,7 +1,7 @@
-use std::fs::DirEntry;
 use crate::file_tracking::{
     Path,
     FileTracker,
+    FileTrackingError
 };
 
 /// Tracks the changes applied to all the files in a directory, and also tracks the changes inside
@@ -16,40 +16,40 @@ pub struct DirectoryTracker {
     directories: Vec<DirectoryTracker>,
 }
 
-#[derive(Debug)]
-pub enum DirectoryTrackerError {
-    RequestedDirectoryDoesntExist,
-}
-
 impl DirectoryTracker {
     /// Create a new directory tracker given the path of the directory to track
-    pub fn new(root: Path) -> Result<DirectoryTracker, DirectoryTrackerError> {
+    pub fn new(root: Path) -> Result<DirectoryTracker, FileTrackingError> {
         match std::fs::read_dir(&root.get_absolute_path()) {
             Ok(files_direntries) => {
 
-                let files = files_direntries
-                    .map(|direntry_result| {
-                        direntry_result.unwrap()
-                    })
-                    .filter(|direntry| {
-                        direntry.metadata().unwrap().is_file()
-                    })
-                    .map(|direntry| {
-                        FileTracker::new(
-                            root.pushed_to_local_path(direntry.path())
-                        ).unwrap()
-                    })
-                    .collect::<Vec<FileTracker>>();
+                let mut files = Vec::new();
+                let mut directories = Vec::new();
+
+                for file_direntry in files_direntries {
+                    let file_direntry = file_direntry.unwrap();
+
+                    if file_direntry.metadata().unwrap().is_file() {
+                        files.push(FileTracker::new(
+                            root.pushed_to_local_path(file_direntry.path())
+                        )?);
+                    }
+
+                    if file_direntry.metadata().unwrap().is_dir() {
+                        directories.push(DirectoryTracker::new(
+                            root.pushed_to_local_path(file_direntry.path())
+                        )?);
+                    }
+                }
 
                 Ok(
                     DirectoryTracker {
                         root,
                         files,
-                        directories: Vec::new(),
+                        directories,
                     }
                 )
             },
-            Err(_) => Err(DirectoryTrackerError::RequestedDirectoryDoesntExist),
+            Err(_) => Err(FileTrackingError::CantOpenElement),
         }
     }
 }

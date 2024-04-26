@@ -5,6 +5,7 @@ use std::{
 };
 use socketioxide::socket::Sid;
 use crate::file_tracking::Path;
+use super::error::FileTrackingError;
 
 #[derive(Debug, serde::Serialize)]
 pub struct FileTracker {
@@ -13,7 +14,7 @@ pub struct FileTracker {
 }
 
 impl FileTracker {
-    pub fn new(file_path: Path) -> Result<FileTracker, FileTrackerError> {
+    pub fn new(file_path: Path) -> Result<FileTracker, FileTrackingError> {
 
         let file = File::open(&file_path.get_absolute_path());
 
@@ -22,48 +23,48 @@ impl FileTracker {
                 file_path,
                 changes_history: VecDeque::new(),
             }),
-            Err(_) => Err(FileTrackerError::CantOpenFile),
+            Err(_) => Err(FileTrackingError::CantOpenElement),
         }
 
     }
 
-    fn open_file_for_reading(&self) -> Result<File, FileTrackerError> {
+    fn open_file_for_reading(&self) -> Result<File, FileTrackingError> {
         match File::open(&self.file_path.get_absolute_path()) {
             Ok(file) => Ok(file),
-            Err(_) => Err(FileTrackerError::CantOpenFile),
+            Err(_) => Err(FileTrackingError::CantOpenElement),
         }
     }
 
     /// WARN: This will create the file if it doesn't exist
     /// or it'll truncate it if it does, this is because it's using
     /// File::create to open it
-    fn open_file_for_writing(&self) -> Result<File, FileTrackerError> {
+    fn open_file_for_writing(&self) -> Result<File, FileTrackingError> {
         match File::create(&self.file_path.get_absolute_path()) {
             Ok(file) => Ok(file),
-            Err(_) => Err(FileTrackerError::CantOpenFile),
+            Err(_) => Err(FileTrackingError::CantOpenElement),
         }
     }
 
-    fn get_current_file_content(&self) -> Result<String, FileTrackerError> {
+    fn get_current_file_content(&self) -> Result<String, FileTrackingError> {
         let mut file = self.open_file_for_reading()?;
 
         let mut content = String::new();
         match file.read_to_string(&mut content) {
             Ok(_) => Ok(content),
-            Err(_) => Err(FileTrackerError::CantReadContentOfFile),
+            Err(_) => Err(FileTrackingError::CantReadContentOfFile),
         }
     }
 
-    fn write_content_to_file(&mut self, content: String) -> Result<(), FileTrackerError> {
+    fn write_content_to_file(&mut self, content: String) -> Result<(), FileTrackingError> {
         let mut file = self.open_file_for_writing()?;
 
         match file.write_all(content.as_bytes()) {
             Ok(_) => Ok(()),
-            Err(_) => Err(FileTrackerError::CantWriteContentToFile),
+            Err(_) => Err(FileTrackingError::CantWriteContentToFile),
         }
     }
 
-    pub fn apply_change(&mut self, change: FileChange) -> Result<(), FileTrackerError> {
+    pub fn apply_change(&mut self, change: FileChange) -> Result<(), FileTrackingError> {
         
         // TODO: This can surely be optimized with some sort of cache stuff to prevent getting the
         // file content over and over whenever a change is applied.
@@ -77,19 +78,6 @@ impl FileTracker {
         Ok(())
     }
 }
-
-#[derive(Debug)]
-pub enum FileTrackerError {
-    CantOpenFile,
-    CantReadContentOfFile,
-    CantWriteContentToFile,
-}
-
-// TODO: This way of storing the changes is a bit weird to use with the Myers diff algorithm, it
-// works, but a single change that has a certain part that hasn't changed will count as 2, for
-// example: AAABBB -> CCABCC Will require 2 FileChange's to get stored, when it was just a single
-// changed with a spot in the middle that stays the same. Maybe create a different struct like
-// LineChange that takes care of this part and store a vector of LineChange's in the FileChange
 
 /// A Change applied to a file. When applying the change, it deletes the content in
 /// between the start index and the end index of it, and then inserts the new content

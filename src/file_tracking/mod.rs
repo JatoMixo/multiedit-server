@@ -12,3 +12,5 @@ pub use file_tracker::{
 mod path;
 pub use path::Path;
 
+mod error;
+pub use error::FileTrackingError;

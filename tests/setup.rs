@@ -9,7 +9,6 @@ use std::{
 use indoc::indoc;
 
 pub struct TestingEnvironment {
-    // TODO: Maybe this should be changed to a PathBuf
     pub directory_path: PathBuf,
     pub example_files_at_root: Vec<String>,
 }
