@@ -78,8 +78,8 @@ impl FileTracker {
         Ok(())
     }
 
-    pub fn get_path(&self) -> Path {
-        self.file_path
+    pub fn get_path(&self) -> &Path {
+        &self.file_path
     }
 }
 
@@ -97,7 +97,6 @@ pub struct FileChange {
 }
 
 impl FileChange {
-    /// Create a new FileChange
     pub fn new(
         author_id: Sid,
         start_index: usize,

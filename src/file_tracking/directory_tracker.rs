@@ -1,43 +1,34 @@
+use std::collections::HashMap;
 use crate::file_tracking::{
     Path,
     FileTracker,
-    FileTrackingError
+    FileTrackingError,
+    FileChange,
 };
 
-/// Tracks the changes applied to all the files in a directory, and also tracks the changes inside
-/// of other directories within it recursively.
 #[derive(Debug, serde::Serialize)]
 pub struct DirectoryTracker {
-    /// The location of the tracked directory
     root: Path,
-    /// The file trackers for each file inside the tracked directory
-    files: Vec<FileTracker>,
-    /// The directory trackers for each nested directory
-    directories: Vec<DirectoryTracker>,
+    files: HashMap<Path, FileTracker>,
 }
 
 impl DirectoryTracker {
-    /// Create a new directory tracker given the path of the directory to track
     pub fn new(root: Path) -> Result<DirectoryTracker, FileTrackingError> {
         match std::fs::read_dir(&root.get_absolute_path()) {
             Ok(files_direntries) => {
 
-                let mut files = Vec::new();
-                let mut directories = Vec::new();
+                let mut files = HashMap::new();
 
                 for file_direntry in files_direntries {
                     let file_direntry = file_direntry.unwrap();
 
                     if file_direntry.metadata().unwrap().is_file() {
-                        files.push(FileTracker::new(
-                            root.pushed_to_local_path(file_direntry.path())
-                        )?);
-                    }
-
-                    if file_direntry.metadata().unwrap().is_dir() {
-                        directories.push(DirectoryTracker::new(
-                            root.pushed_to_local_path(file_direntry.path())
-                        )?);
+                        files.insert(
+                            root.pushed_to_local_path(file_direntry.path()),
+                            FileTracker::new(
+                                root.pushed_to_local_path(file_direntry.path())
+                            )?,
+                        );
                     }
                 }
 
@@ -45,11 +36,19 @@ impl DirectoryTracker {
                     DirectoryTracker {
                         root,
                         files,
-                        directories,
                     }
                 )
             },
             Err(_) => Err(FileTrackingError::CantOpenElement),
         }
+    }
+
+    pub fn apply_change_to_file(&mut self, file_path: Path, change: FileChange) -> Result<(), FileTrackingError> {
+
+        if let Some(file_tracker) = self.files.get_mut(&file_path) {
+            file_tracker.apply_change(change)?;
+        }
+
+        Ok(())
     }
 }
