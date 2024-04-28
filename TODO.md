@@ -4,11 +4,9 @@ Everything that's left to do in the project
 - [ ] Set up proper testing on the project
     - [ ] File Tracking
     - [ ] The server itself???
-- [ ] Add better documentation comments (document the modules, for example)
 
 ## User Management
 - [ ] Allow the server to have a password so not anyone can join
-- [ ] Implement some type of random username when two users have the same username
 - [ ] Allow users to set a color to their cursor
 
 ## File Management
@@ -38,4 +36,4 @@ Everything that's left to do in the project
     - **UNDO STUFF GOES HERE**
 
 ## Docs
-- [ ] Create a small documentation page (with docs.rs in some sort of way, or starlight, who knows) containing the messages the server accepts and returns
+- [ ] Create a small documentation page containing the messages the server accepts and returns
