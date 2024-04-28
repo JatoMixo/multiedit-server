@@ -77,6 +77,10 @@ impl FileTracker {
 
         Ok(())
     }
+
+    pub fn get_path(&self) -> Path {
+        self.file_path
+    }
 }
 
 /// A Change applied to a file. When applying the change, it deletes the content in
@@ -107,21 +111,6 @@ impl FileChange {
             content,
         }
         
-    }
-
-    /// Create a new file change that deletes a range of characters (Replaces that range in the
-    /// content by an empty one)
-    pub fn create_deletion(
-        author_id: Sid,
-        start_index: usize,
-        end_index: usize
-    ) -> FileChange {
-        FileChange {
-            author_id,
-            start_index,
-            end_index,
-            content: String::new(),
-        }
     }
 
     pub fn apply_to(&self, str: &mut String) {
