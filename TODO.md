@@ -1,10 +1,4 @@
 # TODO
-Everything that's left to do in the project
-
-- [ ] Set up proper testing on the project
-    - [ ] File Tracking
-    - [ ] The server itself???
-
 ## User Management
 - [ ] Allow the server to have a password so not anyone can join
 - [ ] Allow users to set a color to their cursor
@@ -36,4 +30,10 @@ Everything that's left to do in the project
     - **UNDO STUFF GOES HERE**
 
 ## Docs
-- [ ] Create a small documentation page containing the messages the server accepts and returns
+- [X] Create a small documentation page containing the messages the server accepts and returns
+
+## Tests
+- [ ] Set up proper testing on the project
+    - [ ] File Tracking
+    - [ ] The server itself???
+
