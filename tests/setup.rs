@@ -21,17 +21,17 @@ pub fn setup_testing_environment() {
 
     File::create(root.join("python/example-1.py"))
         .expect("This is starting to get a bit annoying...")
-        .write_all(content_for_python_example_0().as_bytes())
+        .write_all(content_for_python_example_1().as_bytes())
         .expect("Couldn't write content to file");
 
     File::create(root.join("python/example-2.py"))
         .expect("This is starting to get a bit annoying...")
-        .write_all(content_for_python_example_1().as_bytes())
+        .write_all(content_for_python_example_2().as_bytes())
         .expect("Couldn't write content to file");
 
     File::create(root.join("lua/example-1.lua"))
         .expect("This is starting to get a bit annoying...")
-        .write_all(content_for_lua_example_0().as_bytes())
+        .write_all(content_for_lua_example_1().as_bytes())
         .expect("Couldn't write content to file");
 
     File::create(root.join("lua/testing.lua"))
@@ -41,7 +41,7 @@ pub fn setup_testing_environment() {
 
 }
 
-fn content_for_python_example_0() -> String {
+fn content_for_python_example_1() -> String {
     indoc! {r#"
         print("This is some proper python script")
 
@@ -56,7 +56,7 @@ fn content_for_python_example_0() -> String {
     "#}.to_string()
 }
 
-fn content_for_python_example_1() -> String {
+fn content_for_python_example_2() -> String {
     indoc! {r#"
         # Python? yeah, idk why I chose it
         print("fast to write")
@@ -71,7 +71,7 @@ fn content_for_python_example_1() -> String {
     "#}.to_string()
 }
 
-fn content_for_lua_example_0() -> String {
+fn content_for_lua_example_1() -> String {
     indoc! {r#"
         print("yay! lua")
 
