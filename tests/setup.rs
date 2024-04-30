@@ -1,71 +1,47 @@
 use std::{
-    collections::HashMap,
     path::PathBuf,
     fs::{create_dir_all, File},
     io::Write,
 };
 use indoc::indoc;
 
-pub struct TestingEnvironment {
-    // The directory where the testing is gonna be done
-    pub root: PathBuf,
+pub fn setup_testing_environment() {
+    let root = PathBuf::from("tests/test-directory");
 
-    // Directory => Files it contains (Can be nested)
-    pub files_per_directory: HashMap<PathBuf, Vec<PathBuf>>,
+    create_dir_all(&root).expect("Failed when creating the testing directory wtf");
+
+    let directories: Vec<PathBuf> = vec![
+        root.join("python/"),
+        root.join("lua/"),
+    ];
+
+    directories.iter().for_each(|directory| {
+        create_dir_all(directory).expect("This surely is impossible to error, right?");
+    });
+
+    File::create(root.join("python/example-1.py"))
+        .expect("This is starting to get a bit annoying...")
+        .write_all(content_for_python_example_0().as_bytes())
+        .expect("Couldn't write content to file");
+
+    File::create(root.join("python/example-2.py"))
+        .expect("This is starting to get a bit annoying...")
+        .write_all(content_for_python_example_1().as_bytes())
+        .expect("Couldn't write content to file");
+
+    File::create(root.join("lua/example-1.lua"))
+        .expect("This is starting to get a bit annoying...")
+        .write_all(content_for_lua_example_0().as_bytes())
+        .expect("Couldn't write content to file");
+
+    File::create(root.join("lua/testing.lua"))
+        .expect("This is starting to get a bit annoying...")
+        .write_all(content_for_lua_example_testing().as_bytes())
+        .expect("Couldn't write content to file");
+
 }
 
-impl TestingEnvironment {
-    pub fn take() -> TestingEnvironment {
-        let root = PathBuf::from("tests/test-directory");
-
-        create_dir_all(&root).expect("Failed when creating the testing directory wtf");
-
-        let files_per_directory: HashMap<PathBuf, Vec<PathBuf>> = HashMap::from([
-            (root.join("python/"), vec![root.join("python/example-1.py"),
-                                        root.join("python/example-2.py"),]),
-            (root.join("lua/"), vec![root.join("lua/example-1.lua"),
-                                     root.join("lua/testing.lua"),]),
-        ]);
-
-        files_per_directory.iter().for_each(|(directory, file_groups)| {
-
-            create_dir_all(directory).expect("This surely is impossible to error, right?");
-
-            file_groups.iter().for_each(|file_path| {
-
-                let mut file = File::create(file_path).expect("Couldn't create the file duh");
-
-                let path_for_file_0 = root.join("python/example-1.py");
-                let path_for_file_1 = root.join("python/example-2.py");
-                let path_for_file_2 = root.join("lua/example-1.lua");
-                let path_for_file_3 = root.join("lua/testing.lua");
-
-                match file_path {
-                    path_for_file_0 => {
-                        file.write_all(content_for_file_0().as_bytes()).expect("Failed when creating the file wtf");
-                    },
-                    path_for_file_1 => {
-                        file.write_all(content_for_file_1().as_bytes()).expect("Failed when creating the file wtf");
-                    },
-                    path_for_file_2 => {
-                        file.write_all(content_for_file_2().as_bytes()).expect("Failed when creating the file wtf");
-                    },
-                    path_for_file_3 => {
-                        file.write_all(content_for_file_3().as_bytes()).expect("Failed when creating the file wtf");
-                    },
-                    _ => unreachable!(),
-                }
-            });
-        });
-
-        TestingEnvironment {
-            root,
-            files_per_directory,
-        }
-    }
-}
-
-fn content_for_file_0() -> String {
+fn content_for_python_example_0() -> String {
     indoc! {r#"
         print("This is some proper python script")
 
@@ -80,7 +56,7 @@ fn content_for_file_0() -> String {
     "#}.to_string()
 }
 
-fn content_for_file_1() -> String {
+fn content_for_python_example_1() -> String {
     indoc! {r#"
         # Python? yeah, idk why I chose it
         print("fast to write")
@@ -95,7 +71,7 @@ fn content_for_file_1() -> String {
     "#}.to_string()
 }
 
-fn content_for_file_2() -> String {
+fn content_for_lua_example_0() -> String {
     indoc! {r#"
         print("yay! lua")
 
@@ -109,7 +85,7 @@ fn content_for_file_2() -> String {
     "#}.to_string()
 }
 
-fn content_for_file_3() -> String {
+fn content_for_lua_example_testing() -> String {
     indoc! {r#"
         print("god, this is finally getting over")
 

@@ -1,5 +1,5 @@
 mod setup;
-use setup::TestingEnvironment;
+use setup::setup_testing_environment;
 
 #[cfg(test)]
 mod test_file_tracking {
