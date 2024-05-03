@@ -22,14 +22,16 @@ impl DirectoryTracker {
                 for file_direntry in files_direntries {
                     let file_direntry = file_direntry.unwrap();
 
-                    if file_direntry.metadata().unwrap().is_file() {
-                        files.insert(
-                            root.pushed_to_local_path(file_direntry.path()),
-                            FileTracker::new(
-                                root.pushed_to_local_path(file_direntry.path())
-                            )?,
-                        );
+                    if !file_direntry.metadata().unwrap().is_file() {
+                        continue;
                     }
+
+                    files.insert(
+                        root.pushed_to_local_path(file_direntry.file_name().into()),
+                        FileTracker::new(
+                            root.pushed_to_local_path(file_direntry.file_name().into())
+                        )?,
+                    );
                 }
 
                 Ok(
