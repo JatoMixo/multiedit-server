@@ -45,7 +45,7 @@ impl FileTracker {
         }
     }
 
-    fn get_current_file_content(&self) -> Result<String, FileTrackingError> {
+    pub fn get_current_file_content(&self) -> Result<String, FileTrackingError> {
         let mut file = self.open_file_for_reading()?;
 
         let mut content = String::new();
