@@ -53,4 +53,19 @@ impl DirectoryTracker {
 
         Ok(())
     }
+
+    /// Get the contents of each file
+    pub fn get_file_tree(&self) -> Result<HashMap<&Path, String>, FileTrackingError> {
+
+        let mut file_tree: HashMap<&Path, String> = HashMap::new();
+
+        for (path, file_tracker) in self.files.iter() {
+            file_tree.insert(
+                path,
+                file_tracker.get_current_file_content()?
+            );
+        }
+
+        Ok(file_tree)
+    }
 }
