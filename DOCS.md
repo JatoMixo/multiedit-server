@@ -3,6 +3,9 @@
 - `join` => Request sent after establishing the websocket connection, it sends the configuration and data
             of the client connected to the server, which includes:
     - `username` => The username chosen by the client
+
+    **Possible responses**:
+    - `user-creation-error` => UserCreationError
 ### Still need to be implemented
 - `move-cursor` => Move the cursor to a different position of the file, it takes:
     - `column` => The new column of the cursor
