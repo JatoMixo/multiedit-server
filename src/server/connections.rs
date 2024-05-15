@@ -6,7 +6,7 @@ use socketioxide::{
     }
 };
 use crate::{
-    server::handle_join_request,
+    server::{handle_apply_change, handle_join_request},
     user_management::UserStore,
 };
 use tracing::info;
@@ -16,6 +16,7 @@ pub async fn on_connect(socket: SocketRef) {
     info!("Socket connected: {}", socket.id);
 
     socket.on("join", handle_join_request);
+    socket.on("apply-change", handle_apply_change);
 
     socket.on_disconnect(handle_socket_disconnection);
 }

@@ -3,7 +3,6 @@ use std::{
     fs::File,
     io::{Read, Write},
 };
-use socketioxide::socket::Sid;
 use crate::file_tracking::Path;
 use super::error::FileTrackingError;
 
@@ -64,6 +63,8 @@ impl FileTracker {
         }
     }
 
+    // TODO: Make this use references instead of borrowing the object of the FileChange, for
+    // optimization reasons
     pub fn apply_change(&mut self, change: FileChange) -> Result<(), FileTrackingError> {
         
         // TODO: This can surely be optimized with some sort of cache stuff to prevent getting the
@@ -86,10 +87,8 @@ impl FileTracker {
 /// A Change applied to a file. When applying the change, it deletes the content in
 /// between the start index and the end index of it, and then inserts the new content
 /// there as a sort of replacement. It also contains the ID of the author.
-#[derive(Debug, serde::Serialize)]
+#[derive(Debug, serde::Serialize, Clone)]
 pub struct FileChange {
-    author_id: Sid,
-
     start_index: usize,
     end_index: usize,
     // TODO: Change this to some sort of [u8]
@@ -98,28 +97,21 @@ pub struct FileChange {
 
 impl FileChange {
     pub fn new(
-        author_id: Sid,
         start_index: usize,
         end_index: usize,
         content: String,
     ) -> FileChange {
         FileChange {
-            author_id,
             start_index,
             end_index,
             content,
         }
-        
     }
 
     pub fn apply_to(&self, str: &mut String) {
         str.drain(self.start_index..self.end_index);
 
         str.insert_str(self.start_index, &self.content);
-    }
-
-    pub fn get_author_id(&self) -> Sid {
-        self.author_id
     }
 }
 

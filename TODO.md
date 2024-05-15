@@ -5,7 +5,7 @@
 
 ## File Management
 - [ ] Implement some sort of .gitignore for files that don't want to be shared in the network
-- [ ] Create some sort of LocalPath struct to avoid sending PathBuf's over the network (possible LFI)
+- [X] Create some sort of LocalPath struct to avoid sending PathBuf's over the network (possible LFI)
 - [ ] Use u8 for tracking file content instead of string (faster and works better with binaries and shit like that)
 
 ## File editing

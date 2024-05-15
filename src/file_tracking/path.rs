@@ -5,7 +5,7 @@ use std::path::PathBuf;
 /// path to the file is available.
 /// It takes the root to the directory where the server was launched and the local path, relative
 /// to the server.
-#[derive(Debug, serde::Serialize, Hash, Eq, PartialEq)]
+#[derive(Debug, serde::Serialize, Hash, Eq, PartialEq, Clone)]
 pub struct Path {
     root_path: PathBuf,
     pub local_path: PathBuf,

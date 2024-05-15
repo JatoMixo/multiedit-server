@@ -5,9 +5,9 @@ use tracing_subscriber::FmtSubscriber;
 use socketioxide::SocketIo;
 use std::path::PathBuf;
 use crate::{
-    user_management::UserStore,
-    file_tracking::{DirectoryTracker, Path},
+    file_tracking::{Path, ProjectTracker},
     server::on_connect,
+    user_management::UserStore
 };
 
 pub async fn start_server(port: u16, root_of_project: PathBuf) -> Result<(), Box<dyn std::error::Error>> {
@@ -16,10 +16,10 @@ pub async fn start_server(port: u16, root_of_project: PathBuf) -> Result<(), Box
     info!("Starting server");
 
     let users = UserStore::default();
-    let directory_tracker = DirectoryTracker::new(Path::new(root_of_project, PathBuf::from(""))).unwrap();
+    let project_tracker = ProjectTracker::new(Path::new(root_of_project, PathBuf::new())).unwrap();
 
     let (layer, io) = SocketIo::builder()
-        .with_state(directory_tracker)
+        .with_state(project_tracker)
         .with_state(users)
         .build_layer();
 

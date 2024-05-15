@@ -7,7 +7,7 @@ use tracing::{
     info,
     error,
 };
-use crate::{file_tracking::DirectoryTracker, user_management::{
+use crate::{file_tracking::ProjectTracker, user_management::{
     User, UserCreationRequest, UserStore
 }};
 
@@ -18,7 +18,7 @@ pub async fn handle_join_request(
     user_socket: SocketRef,
     Data(data): Data::<UserCreationRequest>,
     user_store: State<UserStore>,
-    project_tracker: State<DirectoryTracker>,
+    project_tracker: State<ProjectTracker>,
 ) {
 
     info!("A user is trying to connect: 
@@ -43,10 +43,10 @@ pub async fn handle_join_request(
 
 async fn send_files_to_client(
     user_socket: SocketRef,
-    State(project_tracker): State<DirectoryTracker>,
+    State(project_tracker): State<ProjectTracker>,
 ) {
-    match user_socket.emit("filetree", project_tracker) {
+    /*match user_socket.emit("filetree", project_tracker) {
         Ok(_) => info!("Project sucessfully sent to client"),
         Err(err) => error!("There was an error when sending the files to the client: {}", err),
-    }
+    }*/
 }

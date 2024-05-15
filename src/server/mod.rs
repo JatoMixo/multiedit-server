@@ -7,3 +7,7 @@ pub use join::handle_join_request;
 
 mod server;
 pub use server::start_server;
+
+mod apply_change;
+pub use apply_change::handle_apply_change;
+

@@ -13,6 +13,9 @@
     - `end_index` => The index of the end of the change, the character in this index is not included in the change
     - `content` => The content that replaces the characters between **start_index** and **end_index**
 
+    **Possible responses**:
+    - `file-error` => FileTrackingError
+
 ## Messages sent by the server
 ### Still need to be implemented
 - `cursor-moved` => Indicates a user moved their cursor, it returns:
