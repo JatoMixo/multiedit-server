@@ -1,5 +1,5 @@
 use crate::file_tracking::{Path, FileTracker, FileTrackingError, FileChange};
-use std::{fs::read_dir, path::PathBuf, sync::RwLock};
+use std::{collections::HashMap, fs::read_dir, path::PathBuf, sync::RwLock};
 
 /// Tracks all the files inside a directory, including files nested in other directories
 #[derive(Debug)]
@@ -38,8 +38,28 @@ impl ProjectTracker {
         Ok(())
     }
 
-    pub fn get_file_content_tree(&self) {
-        // TODO: Implement this
+    pub fn get_file_content_tree(&self) -> Result<HashMap<String, String>, FileTrackingError> {
+
+        let mut file_content_tree: HashMap<String, String> = HashMap::new();
+
+        let insertion = self
+            .files
+            .read()
+            .unwrap()
+            .iter()
+            .try_for_each(|file_tracker| -> Result<(), FileTrackingError> {
+                file_content_tree.insert(
+                    file_tracker.get_path().clone().local_path.to_str().unwrap().to_string(),
+                    file_tracker.get_current_file_content()?
+                );
+
+                Ok(())
+            });
+
+        match insertion {
+            Ok(()) => Ok(file_content_tree),
+            Err(err) => Err(err),
+        }
     }
 }
 
