@@ -61,6 +61,16 @@ impl ProjectTracker {
             Err(err) => Err(err),
         }
     }
+
+    pub fn get_file_paths(&self) -> Vec<Path> {
+        self
+            .files
+            .read()
+            .unwrap()
+            .iter()
+            .map(|file_tracker| file_tracker.get_path().clone())
+            .collect::<Vec<Path>>()
+    }
 }
 
 fn get_file_tree(root: &Path) -> Result<Vec<Path>, FileTrackingError> {

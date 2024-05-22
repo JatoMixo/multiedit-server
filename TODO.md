@@ -9,10 +9,9 @@
 - [ ] Use u8 for tracking file content instead of string (faster and works better with binaries and shit like that)
 
 ## File editing
-- [ ] Send the content of the files to the client when a user joins to actually edit them
+- [X] Send the content of the files to the client when a user joins to actually edit them
     - [ ] Send them compressed and let the client decompress them for more network performance
-    - [ ] Maybe send first the files with the most users editing them so they can be edited faster
-- [ ] Allow the users to send changes to files, containing only the parts changed and not the entire new file produced.
+- [X] Allow the users to send changes to files, containing only the parts changed and not the entire new file produced.
 - [ ] Store the changes made by each user in a undo tree
     - [ ] Allow to remove specific (or all) changes made by a user
     - [ ] Allow to return to an earlier state of the file

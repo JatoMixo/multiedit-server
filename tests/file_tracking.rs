@@ -20,7 +20,6 @@ mod test_file_tracking {
         FileTracker::new(Path::new(PathBuf::from("tests/test-directory"), PathBuf::from("python/example-1.py")))
             .unwrap()
             .apply_change(FileChange::new(
-                socketioxide::socket::Sid::new(),
                 15, 26,
                 String::from("some terrible")
             ))
