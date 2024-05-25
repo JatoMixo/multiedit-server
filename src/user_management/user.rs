@@ -13,10 +13,10 @@ pub struct User {
 
 impl User {
     /// Crate a new user with its connection id and with the data from the join request
-    pub fn create(id: Sid, user_creation_data: UserCreationRequest) -> User {
+    pub fn create(id: Sid, user_creation_data: &UserCreationRequest) -> User {
         User {
             id,
-            username: user_creation_data.username,
+            username: user_creation_data.username.clone(),
         }
     }
 }

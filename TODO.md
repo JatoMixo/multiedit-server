@@ -33,6 +33,6 @@
 
 ## Tests
 - [ ] Set up proper testing on the project
-    - [ ] File Tracking
+    - [X] File Tracking
     - [ ] The server itself???
 

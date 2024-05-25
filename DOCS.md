@@ -8,10 +8,6 @@
     - `user-creation-error` => UserCreationError
     - `file-content-tree` => HashMap<Path, String>
     - `file-content-error` => String for now
-### Still need to be implemented
-- `move-cursor` => Move the cursor to a different position of the file, it takes:
-    - `column` => The new column of the cursor
-    - `row` => The new row of the cursor
 - `apply-change` => Apply a change to a file, it takes a **FileChange**:
     - `file` => The file to which the change was applied
     - `start_index` => The starting index of the change
@@ -20,13 +16,12 @@
 
     **Possible responses**:
     - `file-error` => FileTrackingError
-
-## Messages sent by the server
 ### Still need to be implemented
-- `cursor-moved` => Indicates a user moved their cursor, it returns:
-    - `client_id` => The ID of the client that moved the cursor
+- `move-cursor` => Move the cursor to a different position of the file, it takes:
     - `column` => The new column of the cursor
     - `row` => The new row of the cursor
+
+## Messages sent by the server
 - `change-applied` => Other user applied a change to a file, it returns:
     - `file` => The file to which the change was applied
     - `start_index` => The starting index of the change
@@ -34,6 +29,12 @@
     - `content` => The content that replaces the characters between **start_index** and **end_index**
 - `client-connected` => Indicates another client connected, to start rendering his mouse.
     - `client_id` => The ID of the connected client
+    - `username` => The username of the connected client
 - `client-disconected` => Indicates another client disconnected, to remove their cursor from the screen.
     - `client_id` => The ID of the disconnected client
+### Still need to be implemented
+- `cursor-moved` => Indicates a user moved their cursor, it returns:
+    - `client_id` => The ID of the client that moved the cursor
+    - `column` => The new column of the cursor
+    - `row` => The new row of the cursor
 

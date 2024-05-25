@@ -1,8 +1,6 @@
-use socketioxide::extract::{
-    SocketRef,
-    State,
-    Data,
-};
+use socketioxide::{extract::{
+    Data, SocketRef, State
+}, socket::Sid};
 use tracing::{
     info,
     error,
@@ -10,6 +8,21 @@ use tracing::{
 use crate::{file_tracking::ProjectTracker, user_management::{
     User, UserCreationRequest, UserStore
 }};
+
+#[derive(serde::Serialize)]
+struct ClientConnectionResponse {
+    user_id: String,
+    username: String,
+}
+
+impl ClientConnectionResponse {
+    pub fn new(user_id: Sid, username: String) -> ClientConnectionResponse {
+        ClientConnectionResponse {
+            user_id: user_id.to_string(),
+            username,
+        }
+    }
+}
 
 /// Handle the join message sent by a client after its connection
 /// used to create the user in the user store, and also send back the files 
@@ -25,7 +38,7 @@ pub async fn handle_join_request(
            - Socket: {:?}
            - User Data: {:?}", user_socket, data);
 
-    let user = User::create(user_socket.id, data);
+    let user = User::create(user_socket.id, &data);
 
     match user_store.add_user(user_socket.id, user).await {
         Ok(_) => {
@@ -37,6 +50,8 @@ pub async fn handle_join_request(
             let _ = user_socket.emit("user-creation-error", err.to_string());
         },
     };
+
+    let _ = user_socket.broadcast().emit("client-connected", ClientConnectionResponse::new(user_socket.id, data.username));
 
     send_files_to_client(user_socket, project_tracker).await;
 }

@@ -4,7 +4,6 @@ use socketioxide::{
         State,
     },
     socket::DisconnectReason,
-    SocketIo,
 };
 use crate::{
     server::{handle_apply_change, handle_join_request},
@@ -26,4 +25,6 @@ pub async fn on_connect(socket: SocketRef) {
 async fn handle_socket_disconnection(socket: SocketRef, disconnect_reason: DisconnectReason, user_store: State<UserStore>) {
     info!("Socket disconnected: {:?} -> {:?}", socket.id, disconnect_reason);
     user_store.remove_user_by_id(socket.id).await;
+
+    let _ = socket.broadcast().emit("client-disconnected", socket.id.to_string());
 }
