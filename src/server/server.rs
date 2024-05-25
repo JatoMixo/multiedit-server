@@ -2,8 +2,8 @@ use tower::builder::ServiceBuilder;
 use tower_http::cors::CorsLayer;
 use tracing::info;
 use tracing_subscriber::FmtSubscriber;
-use socketioxide::SocketIo;
 use std::path::PathBuf;
+use socketioxide::SocketIo;
 use crate::{
     file_tracking::{Path, ProjectTracker},
     server::on_connect,
@@ -29,7 +29,8 @@ pub async fn start_server(port: u16, root_of_project: PathBuf) -> Result<(), Box
         .with_state(io)
         .layer(
             ServiceBuilder::new()
-                .layer(CorsLayer::permissive())
+                .layer(CorsLayer::permissive()) // TODO: Maybe this is not secure, gotta look into
+                                                // it later in the project
                 .layer(layer),
         );
 

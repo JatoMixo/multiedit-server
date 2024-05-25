@@ -48,7 +48,9 @@ async fn send_files_to_client(
     match project_tracker.get_file_content_tree() {
         Err(err) => {
             error!("Error getting file content tree: {:?}", err);
-            // TODO: Disconnect client or send a message to it idk
+
+            let _ = user_socket.emit("file-content-error", err);
+            let _ = user_socket.disconnect();
         },
         Ok(file_content_tree) => {
             if let Err(err) = user_socket.emit("file-content-tree", file_content_tree) {

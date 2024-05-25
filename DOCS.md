@@ -7,6 +7,7 @@
     **Possible responses**:
     - `user-creation-error` => UserCreationError
     - `file-content-tree` => HashMap<Path, String>
+    - `file-content-error` => String for now
 ### Still need to be implemented
 - `move-cursor` => Move the cursor to a different position of the file, it takes:
     - `column` => The new column of the cursor

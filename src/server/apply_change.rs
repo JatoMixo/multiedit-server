@@ -6,7 +6,7 @@ use socketioxide::extract::{
 use tracing::error;
 use crate::file_tracking::{FileChange, ProjectTracker};
 
-#[derive(Debug, serde::Deserialize, Clone)]
+#[derive(Debug, serde::Deserialize, serde::Serialize, Clone)]
 pub struct ChangeRequest {
     file: std::path::PathBuf,
     start_index: usize,
@@ -38,5 +38,5 @@ pub async fn handle_apply_change(
         }
     }
 
-    // TODO: Send the change to other clients
+    let _ = user_socket.broadcast().emit("change-applied", change_request);
 }

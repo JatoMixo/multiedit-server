@@ -1,9 +1,10 @@
 use socketioxide::{
-    socket::DisconnectReason,
     extract::{
         SocketRef,
         State,
-    }
+    },
+    socket::DisconnectReason,
+    SocketIo,
 };
 use crate::{
     server::{handle_apply_change, handle_join_request},
