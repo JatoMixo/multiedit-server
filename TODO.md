@@ -7,6 +7,7 @@
 - [ ] Implement some sort of .gitignore for files that don't want to be shared in the network
 - [X] Create some sort of LocalPath struct to avoid sending PathBuf's over the network (possible LFI)
 - [ ] Use u8 for tracking file content instead of string (faster and works better with binaries and shit like that)
+- [ ] Search optimizations for FileTracking, maybe use async or something like that?
 
 ## File editing
 - [X] Send the content of the files to the client when a user joins to actually edit them
